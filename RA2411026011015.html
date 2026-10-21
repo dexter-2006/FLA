@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automata Lab — PDA & CFG Explorer</title>
+<style>
+:root{--bg:#fff0f5;--panel:#fff8fb;--panel2:#ffe5ef;--line:#edbfd2;--text:#382433;--muted:#806778;--cyan:#c43d82;--lime:#54852b;--pink:#d94f91;--amber:#a76514;--red:#c83e55}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#ffd7e8 0,transparent 40%),radial-gradient(ellipse at 100% 15%,#f9d9ec 0,transparent 32%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}
+button,input{font:inherit}button{cursor:pointer}.wrap{width:min(1160px,92%);margin:auto}.top{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid #ffffff14}.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.4px}.logo{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),var(--lime));color:#06111b;font-weight:900}.tag{font-size:.76rem;color:var(--cyan);border:1px solid #5ce1e655;padding:6px 10px;border-radius:999px}
+.hero{padding:58px 0 34px;display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center}.eyebrow{color:var(--lime);font-size:.78rem;font-weight:800;letter-spacing:2px;text-transform:uppercase}.hero h1{font-size:clamp(2.5rem,6vw,5rem);line-height:.99;letter-spacing:-3px;margin:15px 0 20px}.gradient{background:linear-gradient(90deg,var(--cyan),var(--lime));color:transparent;background-clip:text}.hero p{color:var(--muted);max-width:610px;font-size:1.08rem}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.btn{border:1px solid var(--line);background:#ffe3ef;color:var(--text);padding:11px 16px;border-radius:12px;font-weight:750;transition:.2s}.btn:hover{transform:translateY(-2px);border-color:var(--cyan)}.btn.primary{background:var(--cyan);color:#fff8fc;border-color:transparent}.hero-visual{border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,#fffafd,#ffeaf3);padding:25px;position:relative;overflow:hidden;box-shadow:0 24px 90px #0004}.hero-visual:before{content:"";position:absolute;width:220px;height:220px;background:#5ce1e618;border-radius:50%;filter:blur(10px);right:-70px;top:-100px}.mini-label{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:1.5px}.formula{font:700 clamp(1rem,2.2vw,1.45rem) ui-monospace,monospace;margin:16px 0 20px;color:var(--cyan)}.pipeline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.node{border:1px solid #5ce1e655;border-radius:13px;padding:12px 14px;text-align:center;background:#071622aa;min-width:70px}.node b{display:block;font-size:1.2rem}.arrow{color:var(--lime);font-size:1.2rem}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin:40px 0 18px}.section-head h2{font-size:clamp(1.7rem,4vw,2.6rem);margin:4px 0;letter-spacing:-1px}.section-head p{color:var(--muted);margin:0;max-width:560px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}.tab{background:#0c1a29;border:1px solid var(--line);color:var(--muted);padding:11px 15px;border-radius:12px;font-weight:750}.tab.active{color:#fff8fc;background:var(--lime);border-color:var(--lime)}.layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{border:1px solid var(--line);border-radius:20px;background:linear-gradient(160deg,#fffafd,#fff1f7);padding:22px;min-width:0}.card h3{margin:0 0 7px;font-size:1.18rem}.sub{color:var(--muted);font-size:.9rem;margin:0 0 18px}.pill{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:999px;background:#5ce1e615;color:var(--cyan);font-size:.75rem;font-weight:800}.pill.lime{background:#b6f36b15;color:var(--lime)}.pill.pink{background:#ff82b215;color:var(--pink)}
+.field{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.field input{min-width:0;flex:1;background:#fff7fb;border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--text);outline:none}.field input:focus{border-color:var(--cyan)}.status{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff7fb;color:var(--muted);font-size:.9rem;margin-top:12px}.status.good{border-color:#b6f36b66;color:var(--lime)}.status.bad{border-color:#ff7e8666;color:var(--red)}
+.stack-area{display:flex;gap:14px;align-items:end;min-height:180px;padding:16px;background:#fff7fb;border:1px dashed #31536a;border-radius:14px}.stack-area{position:relative;overflow:hidden}.stack-col{position:relative;min-height:140px;min-width:78px;padding:8px 7px 5px;border-left:3px solid #c43d82;border-right:3px solid #c43d82;border-bottom:3px solid #c43d82;border-radius:0 0 10px 10px;justify-content:flex-end;gap:5px}.stack-cell{position:relative;flex:0 0 auto;transform-origin:center;transition:transform .38s cubic-bezier(.2,.8,.2,1),opacity .28s ease,background .2s ease;box-shadow:0 4px 10px #c43d8214}.stack-cell.entering{animation:stackPush .46s cubic-bezier(.18,.8,.25,1) both}.stack-cell.leaving{animation:stackPop .4s cubic-bezier(.4,0,.8,.2) both}.stack-cell.top-cell{outline:3px solid #c43d8244;outline-offset:1px}.stack-cell.bottom{background:#fff0cf!important;color:#9b5d0d!important;border-color:#e8b45b!important}.stack-visual-caption{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}.stack-operation{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;border-radius:999px;padding:6px 10px;background:#f9d9e9;color:#8c285c;font-size:.78rem;font-weight:850;letter-spacing:.4px}.stack-operation.push{background:#e5f5d7;color:#426d20}.stack-operation.pop{background:#ffe6cf;color:#955014}.stack-operation.neutral{background:#f4e6f0;color:#806778}.stack-motion{font-size:.88rem;color:#806778;min-height:24px}.stack-progress{height:5px;border-radius:99px;background:#f2d8e5;overflow:hidden;margin-top:5px}.stack-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#c43d82,#f28ab9);transition:width .35s ease}@keyframes stackPush{0%{transform:translateY(-55px) scale(.88);opacity:0}65%{transform:translateY(5px) scale(1.03);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}@keyframes stackPop{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-65px) scale(.78);opacity:0}}@media(prefers-reduced-motion:reduce){.stack-cell,.stack-progress span{transition:none}.stack-cell.entering,.stack-cell.leaving{animation:none}}.stack-col{display:flex;flex-direction:column-reverse;gap:5px;align-items:center;min-width:65px}.stack-cell{width:60px;padding:8px 0;text-align:center;border:1px solid #5ce1e688;border-radius:8px;background:#5ce1e61b;color:var(--cyan);font-weight:850;animation:pop .2s ease}.stack-cell.bottom{color:var(--amber);border-color:#ffc66d88;background:#ffc66d12}.stack-empty{color:#71879a;font-size:.85rem;padding:12px}.stack-caption{font-size:.75rem;color:var(--muted);margin-top:8px}.xray{border:1px solid #e5a8c5;background:linear-gradient(135deg,#fffafd,#ffe8f2);border-radius:16px;padding:15px;margin:14px 0 18px}.xray-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.xray-title{font-weight:850;letter-spacing:.4px;color:#8c285c}.xray-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.xray-metric{background:#fff7fb;border:1px solid #edbfd2;border-radius:11px;padding:10px;min-width:0}.xray-metric small{display:block;color:#806778;font-size:.72rem;text-transform:uppercase;letter-spacing:1px}.xray-metric strong{display:block;color:#382433;font-size:1.05rem;margin-top:3px;overflow-wrap:anywhere}.xray-flow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:12px}.xray-token{padding:7px 10px;border-radius:9px;border:1px solid #edbfd2;background:#fff7fb;color:#806778;font:700 .88rem ui-monospace,monospace}.xray-token.active{background:#c43d82;border-color:#c43d82;color:#fff}.xray-explain{margin-top:11px;padding:10px 12px;border-left:3px solid #c43d82;border-radius:0 9px 9px 0;background:#fff7fb;color:#59384c;font-size:.9rem}.xray-empty{color:#806778;font-size:.86rem}@media(max-width:500px){.xray-grid{grid-template-columns:1fr}.xray-head{align-items:flex-start;flex-direction:column}}.trace{display:flex;flex-direction:column;gap:7px;max-height:280px;overflow:auto}.trace-row{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:9px 10px;border-radius:10px;background:#fff7fb;border:1px solid #ffffff0b;font-size:.86rem}.trace-row.current{border-color:var(--cyan);background:#5ce1e611}.trace-row .n{color:var(--muted);font-size:.75rem}.trace-row code{color:var(--lime);white-space:normal;overflow-wrap:anywhere}.trace-row small{color:var(--muted)}
+.states{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0}.state{width:62px;height:62px;border:2px solid var(--cyan);border-radius:50%;display:grid;place-items:center;font-weight:850;color:var(--cyan);position:relative}.state.active{background:var(--cyan);color:#fff8fc;box-shadow:0 0 0 5px #5ce1e61c}.state.final{border-style:double;border-width:4px}.state-arrow{color:var(--lime);font-size:1.2rem}
+.steps{display:grid;gap:10px}.step{display:flex;gap:12px;padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff7fb}.step .num{flex:0 0 30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#5ce1e61c;color:var(--cyan);font-weight:900}.step p{margin:3px 0 0;color:var(--muted);font-size:.9rem}.code{font: .95rem ui-monospace,SFMono-Regular,Menlo,monospace;background:#06131e;border:1px solid var(--line);border-radius:12px;padding:15px;overflow-wrap:anywhere}.production{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin:9px 0;background:#fff7fb}.production code{font-size:1rem;color:var(--cyan)}.production span{font-size:.76rem;color:var(--muted)}.derive-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0}.derive-chip{padding:10px 13px;border-radius:10px;background:#5ce1e612;border:1px solid #5ce1e64a;font:700 1.02rem ui-monospace,monospace}.derive-chip.final{color:var(--lime);border-color:#b6f36b88;background:#b6f36b12}.derive-arrow{color:var(--pink);font-weight:900}.derive-controls{display:flex;gap:8px;flex-wrap:wrap}.mini-btn{background:#ffe3ef;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-weight:750}.mini-btn:hover{border-color:var(--pink)}.note{border-left:3px solid var(--amber);padding:10px 13px;color:var(--muted);background:#ffc66d0c;border-radius:0 9px 9px 0;font-size:.88rem}.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px}.compare .card{padding:20px}.compare h3{color:var(--cyan)}.footer{margin:45px 0 25px;padding:22px 0;border-top:1px solid #ffffff14;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:.85rem}.hidden{display:none!important}.kbd{font: .8rem ui-monospace,monospace;color:var(--amber);border:1px solid #ffc66d55;padding:3px 6px;border-radius:6px}
+@keyframes pop{from{transform:translateY(5px);opacity:.4}to{transform:translateY(0);opacity:1}}
+@media(max-width:780px){.hero{grid-template-columns:1fr;padding-top:40px}.layout,.compare{grid-template-columns:1fr}.section-head{align-items:start;flex-direction:column}.hero h1{letter-spacing:-1.8px}.card{padding:17px}.top{gap:10px}.tag{display:none}}
+</style>
+</head>
+<body>
+<header class="wrap top">
+  <div class="brand"><div class="logo">Σ</div><span>Automata<span style="color:var(--cyan)">Lab</span></span></div>
+  <span class="tag">THEORY OF COMPUTATION · INTERACTIVE EXPLAINER</span>
+</header>
+<main class="wrap">
+<section class="hero">
+  <div>
+    <div class="eyebrow">Learn it. Simulate it. Explain it.</div>
+    <h1>From <span class="gradient">stack</span><br>to grammar.</h1>
+    <p>Two automata problems, one interactive lab. Step through the PDA, watch the stack change, then see how a CFG generates the same pattern. Built for your classroom viva.</p>
+    <div class="hero-actions"><button class="btn primary" onclick="document.getElementById('lab').scrollIntoView({behavior:'smooth'})">Enter the lab ↘</button><button class="btn" onclick="document.getElementById('talk-track').scrollIntoView({behavior:'smooth'})">Presentation script</button></div>
+  </div>
+  <div class="hero-visual">
+    <div class="mini-label">Two problems · one core idea</div>
+    <div class="formula">PUSH → MATCH → POP</div>
+    <div class="pipeline"><div class="node"><b>01</b><small>Store</small></div><span class="arrow">→</span><div class="node"><b>02</b><small>Compare</small></div><span class="arrow">→</span><div class="node"><b>03</b><small>Accept</small></div></div>
+    <p style="font-size:.9rem;margin-bottom:0">A stack remembers what came earlier. A grammar builds matching patterns with rules.</p>
+  </div>
+</section>
+
+<section id="lab">
+  <div class="section-head"><div><div class="eyebrow">Interactive playground</div><h2>Choose your question</h2></div><p>Run a sample, move one transition at a time, and explain what the machine is doing.</p></div>
+  <div class="tabs"><button class="tab active" data-tab="reverse">01 · <code>w#wᴿ</code></button><button class="tab" data-tab="equal">02 · <code>aⁿbⁿ</code></button><button class="tab" data-tab="cfg">03 · CFG derivation</button></div>
+
+  <section id="reverse-panel" class="tab-panel">
+    <div class="layout">
+      <article class="card">
+        <span class="pill">PDA SIMULATOR</span><h3 style="margin-top:12px">Is the second half the reverse?</h3><p class="sub">Language: L = { w#reverse(w) | w ∈ {0,1,…,9}* }</p>
+        <div class="field"><input id="reverseInput" value="101#101" aria-label="Custom input for reverse PDA" placeholder="Enter digits, #, then the reversed digits"><button class="btn primary" id="reverseLoad">Run custom input</button></div><div class="sub">Try: <button class="mini-btn" type="button" onclick="setReverseExample('101#101')">101#101</button> <button class="mini-btn" type="button" onclick="setReverseExample('321#123')">321#123</button> <button class="mini-btn" type="button" onclick="setReverseExample('123#123')">123#123 (reject)</button></div>
+        <div class="states"><div class="state active" id="rQ0">q₀</div><span class="state-arrow">→</span><div class="state" id="rQ1">q₁</div><span class="state-arrow">→</span><div class="state final" id="rQ2">q₂</div></div>
+        <div class="mini-label">Input tape</div><div id="reverseTape" class="derive-flow"></div>
+        <div class="mini-label">Stack · top is highlighted</div><div class="stack-area"><div id="reverseStack" class="stack-col"></div><div id="reverseStackHint" class="stack-empty">Stack is empty</div><div class="stack-visual-caption"><span id="reverseStackOperation" class="stack-operation neutral">WAITING FOR INPUT</span><div id="reverseStackMotion" class="stack-motion">Load an input, then step through the stack.</div><div class="stack-progress"><span id="reverseStackProgress"></span></div></div></div><div class="stack-caption">Animated stack: new digits drop in on push; matching digits lift out on pop. The top of the stack is highlighted.</div>
+        <div class="field"><button class="btn primary" id="reverseNext">Next step →</button><button class="btn" id="reverseReset">Reset</button></div>
+        <div id="reverseStatus" class="status">Ready. Press “Next step” to begin.</div>
+      </article>
+      <article class="card"><h3>Live PDA X-Ray</h3><p class="sub">Watch the machine's current state, input symbol, stack top, and decision update as you step.</p><div id="rXray" class="xray"><div class="xray-head"><span class="xray-title">🔬 MACHINE INSPECTOR</span><span class="pill">READY</span></div><div class="xray-grid"><div class="xray-metric"><small>Current state</small><strong>q₀</strong></div><div class="xray-metric"><small>Input symbol</small><strong>—</strong></div><div class="xray-metric"><small>Stack top</small><strong>—</strong></div></div><div class="xray-flow"><span class="xray-token active">Read</span><span class="xray-token">Transition</span><span class="xray-token">Stack update</span></div><div class="xray-explain">Load an input, then press Next step to inspect each transition.</div></div><h3>Transition trace</h3><p class="sub">Each row explains the action taken by the PDA.</p><div id="reverseTrace" class="trace"><div class="stack-empty">Your step-by-step trace will appear here.</div></div><div class="note" style="margin-top:14px">Rule: before <code>#</code>, push each digit. After <code>#</code>, match the next digit with the stack top and pop it.</div></article>
+    </div>
+  </section>
+
+  <section id="equal-panel" class="tab-panel hidden">
+    <div class="layout">
+      <article class="card">
+        <span class="pill lime">PDA SIMULATOR</span><h3 style="margin-top:12px">Equal a's, then equal b's</h3><p class="sub">Language: L = { aⁿbⁿ | n ≥ 0 } · acceptance by empty stack</p>
+        <div class="field"><input id="equalInput" value="aabb" aria-label="Input string for a n b n PDA"><button class="btn primary" id="equalLoad">Load input</button></div>
+        <div class="states"><div class="state active" id="eQ0">q₀</div><span class="state-arrow">→</span><div class="state" id="eQ1">q₁</div><span class="state-arrow">→</span><div class="state final" id="eQ2">q₂</div></div>
+        <div class="mini-label">Input tape</div><div id="equalTape" class="derive-flow"></div>
+        <div class="mini-label">Stack · top is highlighted</div><div class="stack-area"><div id="equalStack" class="stack-col"></div><div id="equalStackHint" class="stack-empty">Stack is empty</div><div class="stack-visual-caption"><span id="equalStackOperation" class="stack-operation neutral">WAITING FOR INPUT</span><div id="equalStackMotion" class="stack-motion">Load an input, then step through the stack.</div><div class="stack-progress"><span id="equalStackProgress"></span></div></div></div><div class="stack-caption">Animated stack: A drops in when an a is read and lifts out when a b matches it.</div>
+        <div class="field"><button class="btn primary" id="equalNext">Next step →</button><button class="btn" id="equalReset">Reset</button></div>
+        <div id="equalStatus" class="status">Ready. Press “Next step” to begin.</div>
+      </article>
+      <article class="card"><h3>Live PDA X-Ray</h3><p class="sub">Inspect the push/pop phase and why each symbol is accepted or rejected.</p><div id="eXray" class="xray"><div class="xray-head"><span class="xray-title">🔬 MACHINE INSPECTOR</span><span class="pill lime">READY</span></div><div class="xray-grid"><div class="xray-metric"><small>Current state</small><strong>q₁</strong></div><div class="xray-metric"><small>Input symbol</small><strong>—</strong></div><div class="xray-metric"><small>Stack top</small><strong>Z₀</strong></div></div><div class="xray-flow"><span class="xray-token active">Read</span><span class="xray-token">Push / Pop</span><span class="xray-token">Check</span></div><div class="xray-explain">Load an input, then press Next step to inspect each transition.</div></div><h3>Transition trace</h3><p class="sub">Follow how the count of a's is stored in the stack.</p><div id="equalTrace" class="trace"><div class="stack-empty">Your step-by-step trace will appear here.</div></div><div class="note" style="margin-top:14px">If an A remains or a b has no A to pop, the string is rejected.</div></article>
+    </div>
+  </section>
+
+  <section id="cfg-panel" class="tab-panel hidden">
+    <div class="layout">
+      <article class="card">
+        <span class="pill pink">GRAMMAR BUILDER</span><h3 style="margin-top:12px">Generate a matching string</h3><p class="sub">CFG for L = { aⁿbⁿ | n ≥ 0 }</p>
+        <div class="production"><code>S → aSb</code><span>Recursive rule · add a pair</span></div><div class="production"><code>S → ε</code><span>Base rule · stop</span></div>
+        <p class="sub" style="margin-top:18px">Choose how many matching pairs to generate.</p>
+        <div class="field"><input id="pairCount" type="number" min="0" max="8" value="2" aria-label="Number of pairs"><button class="btn primary" id="deriveBtn">Build derivation</button></div>
+        <div class="mini-label">Derivation path</div><div id="deriveFlow" class="derive-flow"></div>
+        <div class="derive-controls"><button class="mini-btn" id="derivePrev">← Previous</button><button class="mini-btn" id="deriveNext">Next →</button><button class="mini-btn" id="deriveAll">Show all</button></div>
+        <div id="deriveStatus" class="status">The grammar starts with S.</div>
+      </article>
+      <article class="card"><h3>Why this grammar works</h3><p class="sub">Explain the rule, not just the answer.</p>
+        <div class="steps"><div class="step"><div class="num">1</div><div><b>Start with S</b><p>S is the start symbol; it is the variable we keep replacing.</p></div></div><div class="step"><div class="num">2</div><div><b>Apply S → aSb</b><p>Every use adds one a on the left and one b on the right.</p></div></div><div class="step"><div class="num">3</div><div><b>Apply S → ε</b><p>Epsilon removes S and ends the derivation.</p></div></div><div class="step"><div class="num">4</div><div><b>Result</b><p>Equal counts, and all a's come before b's.</p></div></div></div>
+        <div class="note" style="margin-top:14px">Example: S ⇒ aSb ⇒ aaSbb ⇒ aabb.</div>
+      </article>
+    </div>
+  </section>
+</section>
+
+<section>
+  <div class="section-head"><div><div class="eyebrow">The big idea</div><h2>Same language, different lens</h2></div><p>A PDA recognizes strings using a stack. A CFG generates strings using production rules.</p></div>
+  <div class="compare"><article class="card"><h3>01 / PDA = checker</h3><p class="sub">Reads an input that already exists.</p><div class="code">read symbol → inspect stack → push/pop → accept/reject</div><p style="color:var(--muted);font-size:.9rem">Think: “Does this string follow the rule?”</p></article><article class="card"><h3>02 / CFG = generator</h3><p class="sub">Builds a string from a start symbol.</p><div class="code">S → aSb → aaSbb → aabb</div><p style="color:var(--muted);font-size:.9rem">Think: “How can I create a valid string?”</p></article></div>
+</section>
+
+<footer class="footer"><span>AutomataLab · Theory of Computation</span><span>Interactive presentation · Theory of Computation ✦</span></footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden'));$(btn.dataset.tab+'-panel').classList.remove('hidden')}));
+function copyText(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>alert('Script copied!')).catch(()=>alert(t))}else alert(t)}
+function renderTape(el,input,pos){el.innerHTML='';[...input].forEach((ch,i)=>{const c=document.createElement('span');c.className='derive-chip'+(i===pos?' final':'');c.textContent=ch;c.style.minWidth='38px';c.style.textAlign='center';el.appendChild(c)});const end=document.createElement('span');end.className='mini-label';end.textContent=pos>=input.length?'END':'← next';el.appendChild(end)}
+const stackRenderState={};
+function renderStack(el,hint,stack,bottom,prefix,action){
+  const key=prefix||el.id;
+  const previous=stackRenderState[key]||[];
+  const actionText=action||'';
+  const isPush=/push/i.test(actionText);
+  const isPop=/pop/i.test(actionText);
+  const operationEl=$(key==='reverse'?'reverseStackOperation':'equalStackOperation');
+  const motionEl=$(key==='reverse'?'reverseStackMotion':'equalStackMotion');
+  const progressEl=$(key==='reverse'?'reverseStackProgress':'equalStackProgress');
+  let operation='STACK READY',motion='Stack is waiting for the next transition.',kind='neutral';
+  if(/ACCEPT/i.test(actionText)){operation='ACCEPT · STACK CLEARED';motion='All required symbols matched. The stack is empty.';kind='push'}
+  else if(/Mismatch|Invalid input|No A is available|An a appears|unmatched A|remain on the stack/i.test(actionText)){operation='REJECT · RULE VIOLATION';motion=actionText;kind='pop'}
+  else if(/Read #/i.test(actionText)){operation='PHASE SWITCH';motion='The separator was read. Push mode ends; matching and popping begin.';kind='neutral'}
+  else if(isPush){operation='PUSH ↓';motion=/push A/i.test(actionText)?'A is added to the top to count one more a.':`Symbol ${actionText.match(/Read (.)/)?.[1]||''} drops onto the stack.`;kind='push'}
+  else if(isPop){operation='POP ↑';motion=/pop A/i.test(actionText)?'The top A lifts out because this b matched it.':`The matching symbol lifts off the stack.`;kind='pop'}
+  if(operationEl){operationEl.textContent=operation;operationEl.className='stack-operation '+kind}
+  if(motionEl)motionEl.textContent=motion;
+  if(progressEl){const denominator=Math.max(1,stack.length+(isPop?1:0));progressEl.style.width=Math.min(100,stack.length/denominator*100)+'%'}
+  const removed=previous.length>stack.length;
+  const added=stack.length>previous.length;
+  if(removed){
+    const oldTop=el.lastElementChild;
+    if(oldTop){oldTop.classList.add('leaving');setTimeout(()=>{if(oldTop.isConnected)oldTop.remove()},390)}
+  }
+  if(added){
+    // Retain existing nodes so the newly pushed item can animate into the top position.
+    const d=document.createElement('div');
+    d.className='stack-cell entering'+(bottom&&stack.length===1?' bottom':'');
+    d.textContent=stack[stack.length-1];
+    el.appendChild(d);
+    setTimeout(()=>d.classList.remove('entering'),470);
+  }else if(!removed && !el.children.length && stack.length){
+    stack.forEach((s,i)=>{const d=document.createElement('div');d.className='stack-cell'+(bottom&&i===0?' bottom':'');d.textContent=s;el.appendChild(d)});
+  }else if(!removed && !added && stack.length!==el.children.length){
+    el.innerHTML='';
+    stack.forEach((s,i)=>{const d=document.createElement('div');d.className='stack-cell'+(bottom&&i===0?' bottom':'');d.textContent=s;el.appendChild(d)});
+  }
+  // Keep labels in stack order and highlight the topmost cell.
+  [...el.children].forEach((cell,i)=>{cell.classList.toggle('top-cell',i===el.children.length-1);if(bottom&&i===0)cell.classList.add('bottom')});
+  if(!stack.length){hint.textContent='Stack is empty';hint.classList.remove('hidden');if(el.children.length===0){}}
+  else hint.classList.add('hidden');
+  stackRenderState[key]=[...stack];
+}
+function addTrace(el,rows,idx){el.innerHTML='';rows.forEach((r,i)=>{const d=document.createElement('div');d.className='trace-row'+(i===idx?' current':'');d.innerHTML=`<span class="n">${i+1}</span><code>${escapeHTML(r.action)}</code><small>${escapeHTML(r.stack)}</small>`;el.appendChild(d)});el.scrollTop=el.scrollHeight}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function makeReverse(input){let steps=[],stack=[],pos=0,phase='push',error='',state='q₀';const add=(action)=>steps.push({pos,stack:[...stack],phase,state,action});if(!/^\d*#\d*$/.test(input)||!input.includes('#')){return {steps:[{pos:0,stack:[],phase:'done',state:'q₀',action:'Invalid input: use digits 0–9 and exactly one #.'}],result:false,error:'Use digits 0–9 and exactly one #.'}}let hash=input.indexOf('#');for(pos=0;pos<input.length;pos++){const ch=input[pos];if(pos<hash){stack.push(ch);state='q₁';phase='push';add(`Read ${ch}: push ${ch}`)}else if(pos===hash){phase='match';state='q₂';add('Read #: switch to match/pop phase')}else{phase='match';state='q₂';if(stack[stack.length-1]===ch){stack.pop();add(`Read ${ch}: matches stack top; pop ${ch}`)}else{error=`Mismatch at position ${pos+1}: expected ${stack[stack.length-1]||'no symbol'}, got ${ch}.`;add(error);return {steps,result:false,error}}}}if(stack.length){error='Input ended, but symbols remain on the stack.';add(error);return {steps,result:false,error}}add('Input consumed and stack empty: ACCEPT');return {steps,result:true,error:''}}
+function makeEqual(input){let steps=[],stack=['Z₀'],phase='push',state='q₁',error='';const add=(pos,action)=>steps.push({pos,stack:[...stack],phase,state,action});if(!/^[ab]*$/.test(input)){return {steps:[{pos:0,stack:[],phase:'done',state:'q₀',action:'Invalid input: use only a and b.'}],result:false,error:'Use only a and b.'}}let seenB=false;for(let pos=0;pos<input.length;pos++){let ch=input[pos];if(ch==='a'){if(seenB){error='An a appears after the b-phase started.';state='q₂';add(pos,error);return {steps,result:false,error}}stack.push('A');state='q₁';phase='push';add(pos,`Read a: push A`)}else{seenB=true;state='q₂';phase='pop';if(stack[stack.length-1]==='A'){stack.pop();add(pos,'Read b: pop A')}else{error='No A is available to match this b.';add(pos,error);return {steps,result:false,error}}}}if(stack.length===1&&stack[0]==='Z₀'){stack.pop();state='q₃';phase='done';add(input.length,'Input consumed; remove Z₀: ACCEPT');return {steps,result:true,error:''}}error=stack.length>1?'Input ended with unmatched A symbols.':'Input not accepted.';add(input.length,error);return {steps,result:false,error}}
+function renderXray(prefix,step,input,index,total,result){
+  const el=$(prefix==='reverse'?'rXray':'eXray'); if(!el)return;
+  const state=step.state||'q₀';
+  const pos=typeof step.pos==='number'?step.pos:0;
+  const symbol=pos<input.length?input[pos]:'END';
+  const stack=step.stack||[];
+  const top=stack.length?stack[stack.length-1]:'EMPTY';
+  const action=step.action||'Ready to start';
+  let phaseLabel,explanation,stages;
+  if(prefix==='reverse'){
+    if(/Invalid input/.test(action)){phaseLabel='INVALID';explanation='The input format is invalid. Use digits, exactly one #, then the reversed digits.';stages=['Validate','No transition','Reject'];}
+    else if(/Read #/.test(action)){phaseLabel='SWITCH';explanation='The separator # ends the push phase. The PDA now compares the remaining input against the stack top.';stages=['Read #','Switch phase','Match'];}
+    else if(/push/.test(action)){phaseLabel='PUSH';explanation=`Read ${symbol==='END'?'a digit':symbol} before # and push it onto the stack so it can be checked later.`;stages=['Read digit','Push symbol','Remember'];}
+    else if(/matches stack top/.test(action)){phaseLabel='MATCH + POP';explanation=`The input symbol matches the stack top. Pop ${symbol} and move to the next input symbol.`;stages=['Read digit','Match top','Pop symbol'];}
+    else if(/Mismatch/.test(action)){phaseLabel='MISMATCH';explanation=action+' The PDA rejects because the second part is not the reverse of the first.';stages=['Read digit','Mismatch','Reject'];}
+    else if(/remain on the stack/.test(action)){phaseLabel='INCOMPLETE';explanation='The input ended before all stored symbols were matched.';stages=['Input ended','Stack remains','Reject'];}
+    else if(/ACCEPT/.test(action)){phaseLabel='ACCEPT';explanation='The entire input was consumed and every stored digit was matched. The stack is empty.';stages=['Read all','Stack empty','Accept'];}
+    else {phaseLabel='READY';explanation='Press Next step to watch the PDA process the input.';stages=['Read','Transition','Stack update'];}
+  }else{
+    if(/Invalid input/.test(action)){phaseLabel='INVALID';explanation='This language accepts only a’s followed by b’s. Use letters a and b.';stages=['Validate','No transition','Reject'];}
+    else if(/push A/.test(action)){phaseLabel='PUSH';explanation='Each a adds one A to the stack. This records how many a’s must be matched by b’s.';stages=['Read a','Push A','Count'];}
+    else if(/pop A/.test(action)){phaseLabel='POP';explanation='A b matches one earlier a, so the PDA pops one A from the stack.';stages=['Read b','Match A','Pop A'];}
+    else if(/An a appears/.test(action)){phaseLabel='ORDER ERROR';explanation='An a appeared after the b phase started. The required order is all a’s first, then all b’s.';stages=['Read a','Wrong phase','Reject'];}
+    else if(/No A is available/.test(action)){phaseLabel='STACK UNDERFLOW';explanation='A b needs an A to pop, but none is available. There are more b’s than a’s.';stages=['Read b','No A found','Reject'];}
+    else if(/unmatched A/.test(action)){phaseLabel='LEFTOVER A';explanation='The input ended while A symbols remained. There are more a’s than b’s.';stages=['Input ended','A remains','Reject'];}
+    else if(/ACCEPT/.test(action)){phaseLabel='ACCEPT';explanation='All input was consumed, every b matched an A, and the stack is empty.';stages=['Read all','Stack empty','Accept'];}
+    else {phaseLabel='READY';explanation='Press Next step to watch each a push A and each b pop A.';stages=['Read','Push / Pop','Check'];}
+  }
+  const badge=el.querySelector('.pill');
+  badge.textContent=phaseLabel; badge.className='pill '+(phaseLabel==='ACCEPT'?'lime':(/ERROR|MISMATCH|UNDERFLOW|INVALID|LEFTOVER/.test(phaseLabel)?'pink':''));
+  const metrics=el.querySelectorAll('.xray-metric strong');
+  metrics[0].textContent=state; metrics[1].textContent=symbol; metrics[2].textContent=top;
+  const flow=el.querySelector('.xray-flow'); flow.innerHTML='';
+  stages.forEach((stage,i)=>{const token=document.createElement('span');token.className='xray-token'+(i===1?' active':'');token.textContent=stage;flow.appendChild(token);if(i<stages.length-1){const arrow=document.createElement('span');arrow.textContent='→';arrow.style.color='#c43d82';flow.appendChild(arrow)}});
+  el.querySelector('.xray-explain').textContent=explanation;
+}
+function setupSimulator(prefix,build){let run=null,index=0,input='';function paint(){const step=run.steps[Math.min(index,run.steps.length-1)]||{pos:0,stack:[],state:'q₀',action:'Ready'};renderTape($(prefix+'Tape'),input,step.pos);renderStack($(prefix+'Stack'),$(prefix+'StackHint'),step.stack,prefix==='equal',prefix,step.action);addTrace($(prefix+'Trace'),run.steps,Math.min(index,run.steps.length-1));$(prefix+'Status').textContent=index===0?'Ready. Press “Next step” to begin.':step.action;$(prefix+'Status').className='status '+(index>=run.steps.length-1?(run.result?'good':'bad'):'');['Q0','Q1','Q2'].forEach((s,i)=>{const el=$((prefix==='reverse'?'r':'e')+s);if(el)el.classList.toggle('active',step.state===['q₀','q₁','q₂'][i]||step.state===['q₀','q₁','q₂'][i].replace('₀','0').replace('₁','1').replace('₂','2'))});renderXray(prefix,step,input,index,run.steps.length,run.result)}
+function load(){input=$(prefix+'Input').value.trim();run=build(input);index=0;stackRenderState[prefix]=[];$(prefix+'Stack').innerHTML='';paint()}$(prefix+'Load').addEventListener('click',load);$(prefix+'Reset').addEventListener('click',()=>{index=0;paint()});$(prefix+'Next').addEventListener('click',()=>{if(!run)load();else if(index<run.steps.length-1)index++;paint()});load()}
+function setReverseExample(value){$('reverseInput').value=value;$('reverseLoad').click()}
+setupSimulator('reverse',makeReverse);setupSimulator('equal',makeEqual);
+let derivation=[],dIndex=0;function buildDerivation(){let n=Number($('pairCount').value);n=Math.max(0,Math.min(8,Number.isFinite(n)?Math.floor(n):2));$('pairCount').value=n;derivation=['S'];let current='S';for(let i=0;i<n;i++){current='a'+current+'b';derivation.push(current)}derivation.push(current.replace('S','ε'));dIndex=0;paintDerivation()}
+function paintDerivation(){const flow=$('deriveFlow');flow.innerHTML='';derivation.forEach((s,i)=>{if(i){const a=document.createElement('span');a.className='derive-arrow';a.textContent='⇒';flow.appendChild(a)}const c=document.createElement('span');c.className='derive-chip'+(i===dIndex?' final':'');c.textContent=s;flow.appendChild(c)});[...flow.children].forEach((c,i)=>{if(c.classList.contains('derive-chip'))c.classList.toggle('hidden',Number(c.dataset.step||0)>dIndex);});$('deriveStatus').textContent=dIndex===derivation.length-1?'Finished: '+derivation[dIndex].replace('ε','')+' is generated.':`Step ${dIndex+1} of ${derivation.length}: apply ${dIndex<derivation.length-2?'S → aSb':'S → ε'} when ready.`}
+$('deriveBtn').addEventListener('click',buildDerivation);$('derivePrev').addEventListener('click',()=>{dIndex=Math.max(0,dIndex-1);paintDerivation()});$('deriveNext').addEventListener('click',()=>{dIndex=Math.min(derivation.length-1,dIndex+1);paintDerivation()});$('deriveAll').addEventListener('click',()=>{dIndex=derivation.length-1;paintDerivation()});buildDerivation();
+</script>
+</body></html>
